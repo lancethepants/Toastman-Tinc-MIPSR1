@@ -150,6 +150,14 @@ Copyright (C) 2010-2011 Jean-Yves Avenard<br>
 <br>
 <!-- JYAVENARD-END -->
 
+<!-- TINC-BEGIN -->
+<b>"Lancethepants" Features:</b><br>
+- Tinc VPN integration and GUI<br>
+Copyright (C) 2014 Lance Fredrickson<br>
+<a href='mailto:lancethepants@gmail.com'>lancethepants@gmail.com</a><br>
+<br>
+<!-- TINC-END -->
+
 <b>"Teaman" Features:</b><br>
 - QOS-detailed & ctrate improved filters<br>
 - Per-IP bandwidth monitoring of LAN clients [cstats v2]<br>

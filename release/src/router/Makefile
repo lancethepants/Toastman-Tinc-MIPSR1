@@ -123,6 +123,7 @@ obj-$(TCONFIG_ZEBRA) += zebra
 #	obj-$(TCONFIG_IPP2P) += ipp2p
 obj-$(TCONFIG_LZO) += lzo
 obj-$(TCONFIG_OPENVPN) += openvpn
+obj-$(TCONFIG_TINC) += tinc
 obj-$(TCONFIG_EMF) += emf
 obj-$(TCONFIG_EMF) += igs
 
@@ -135,7 +136,11 @@ else
   ifeq ($(TCONFIG_FTP_SSL),y)
     export FULL_OPENSSL := y
   else
-    FULL_OPENSSL :=
+    ifeq ($(TCONFIG_TINC),y)
+      export FULL_OPENSSL := y
+    else
+	FULL_OPENSSL :=
+    endif
   endif
 endif
 
@@ -623,7 +628,7 @@ openssl/stamp-h1:
 	shared $(OPENSSL_CIPHERS) \
 	no-sha0 no-smime no-camellia no-krb5 no-rmd160 no-ripemd \
 	no-seed no-capieng no-cms no-gms no-gmp no-rfc3779 \
-	no-ec no-ecdh no-ecdsa no-err no-hw no-jpake no-threads \
+	$(if $(TCONFIG_TINC),,no-ec no-ecdh no-ecdsa) no-err no-hw no-jpake no-threads \
 	no-zlib no-engine no-engines no-sse2 no-perlasm \
 	no-dtls1 no-store no-psk no-md2 no-mdc2 no-ts
 
@@ -1453,6 +1458,39 @@ openvpn-install: openvpn
 	install -D openvpn/openvpn $(INSTALLDIR)/openvpn/usr/sbin/openvpn
 	$(STRIP) -s $(INSTALLDIR)/openvpn/usr/sbin/openvpn
 	chmod 0500 $(INSTALLDIR)/openvpn/usr/sbin/openvpn
+
+tinc/stamp-h1: openssl zlib lzo
+	@cd tinc && autoreconf -fsi && \
+	CC=$(CC) AR=$(AR) RANLIB=$(RANLIB) LD=$(LD) \
+	CFLAGS="-Os -Wall $(EXTRACFLAGS) -fPIC -ffunction-sections -fdata-sections" \
+	LDFLAGS="-ffunction-sections -fdata-sections -Wl,--gc-sections -fPIC" \
+	$(CONFIGURE) \
+	--prefix=/usr \
+	--sysconfdir=/etc \
+	--localstatedir=/var \
+	--with-zlib-include="$(TOP)/zlib" \
+	--with-zlib-lib="$(TOP)/zlib" \
+	--with-lzo-include="$(TOP)/lzo/include" \
+	--with-lzo-lib="$(TOP)/lzo/src/.libs" \
+	--with-openssl-include="$(TOP)/openssl/include" \
+	--with-openssl-lib="$(TOP)/openssl" \
+	--disable-curses \
+	--disable-readline
+	@touch tinc/stamp-h1
+
+tinc: tinc/stamp-h1
+	@$(SEP)
+	@$(MAKE) -C tinc LIBS="-lcrypto $(TOP)/zlib/libz.a -llzo2" $(PARALLEL_BUILD)
+
+tinc-clean:
+	-@$(MAKE) -C tinc clean
+	@rm -f tinc/stamp-h1
+
+tinc-install:
+	install -D tinc/src/tinc $(INSTALLDIR)/tinc/usr/sbin/tinc
+	install -D tinc/src/tincd $(INSTALLDIR)/tinc/usr/sbin/tincd
+	$(STRIP) $(INSTALLDIR)/tinc/usr/sbin/tinc
+	$(STRIP) $(INSTALLDIR)/tinc/usr/sbin/tincd
 
 snmp/stamp-h1:
 	cd snmp && \

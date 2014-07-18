@@ -418,6 +418,14 @@ extern void clear_pptp_route(void);
 #define write_vpn_resolv(f) (0)
 #endif
 
+// tinc.c
+#ifdef TCONFIG_TINC
+extern void start_tinc();
+extern void start_tinc_wanup();
+extern void stop_tinc();
+extern void run_tinc_firewall_script();
+#endif
+
 //nvram
 extern int nvram_file2nvram(const char *name, const char *filename);
 extern int nvram_nvram2file(const char *name, const char *filename);

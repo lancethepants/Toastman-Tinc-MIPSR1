@@ -200,6 +200,13 @@ ifneq ($(TCONFIG_PPTP),y)
 	sed -i $(INSTALLDIR)/www/about.asp -e "/PPTP-BEGIN/,/PPTP-END/d"
 endif
 
+# Only include the Tinc page if it is compiled in
+ifneq ($(TCONFIG_TINC),y)
+	rm -f $(INSTALLDIR)/www/vpn-tinc.asp
+	sed -i $(INSTALLDIR)/www/tomato.js -e "/TINC-BEGIN/,/TINC-END/d"
+	sed -i $(INSTALLDIR)/www/about.asp -e "/TINC-BEGIN/,/TINC-END/d"
+endif
+
 # clean up
 	cd $(INSTALLDIR)/www && \
 	for F in $(wildcard *.asp *.js *.jsx *.html); do \
@@ -224,6 +231,7 @@ endif
 		-e "/NOCAT-BEGIN/d"	-e "/NOCAT_END/d"\
 		-e "/SNMP-BEGIN/d"	-e "/SNMP_END/d"\
 		-e "/ VLAN-BEGIN/d"	-e "/ VLAN-END/d" \
+		-e "/TINC-BEGIN/d"	-e "/TINC-END/d"\
 		|| true; \
 	done
 

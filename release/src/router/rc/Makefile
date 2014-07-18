@@ -35,6 +35,9 @@ endif
 ifeq ($(TCONFIG_OPENVPN),y)
 OBJS += vpn.o
 endif
+ifeq ($(TCONFIG_TINC),y)
+OBJS += tinc.o
+endif
 ifeq ($(TCONFIG_NOCAT),y)
 OBJS += nocat.o
 endif
