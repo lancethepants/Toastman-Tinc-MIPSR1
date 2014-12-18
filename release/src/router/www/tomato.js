@@ -1727,9 +1727,12 @@ TomatoGrid.prototype = {
 	},
 
 	clearTextarea: function() {
-		for (var i = 0; i < this.editorFields.length; ++i)
-			if(this.editorFields[i].type == 'textarea')
+		for (var i = 0; i < this.editorFields.length; ++i){
+			if(this.editorFields[i].type == 'textarea'){
 				document.getElementById(this.editorFields[i].proxy).value = '';
+				ferror.clear(document.getElementById(this.editorFields[i].proxy));
+			}
+		}
 	},
 
 	verifyFields: function(row, quiet) {
