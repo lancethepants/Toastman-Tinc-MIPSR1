@@ -97,7 +97,7 @@ th.dataToView = function(data) {
 
 th.fieldValuesToData = function(row) {
 	var f = fields.getAll(row);
-	return [f[0].checked ? 1 : 0, f[1].value, f[2].value, f[3].value, f[4].value, f[5].value, _host_rsa_key.value, _host_ecdsa_key.value, _host_custom.value ];
+	return [f[0].checked ? 1 : 0, f[1].value, f[2].value, f[3].value, f[4].value, f[5].value, E('_host_rsa_key').value, E('_host_ecdsa_key').value, E('_host_custom').value ];
 }
 
 
@@ -109,33 +109,48 @@ th.resetNewEditor = function() {
 	f[3].value = '';
 	f[4].selectedIndex = 0;
 	f[5].value = '';
-	_host_rsa_key.value = '';
-	_host_ecdsa_key.value = '';
-	_host_custom.value = '';
+	E('_host_rsa_key').value = '';
+	E('_host_ecdsa_key').value = '';
+	E('_host_custom').value = '';
 	ferror.clearAll(fields.getAll(this.newEditor));
-	ferror.clear(_host_rsa_key);
-	ferror.clear(_host_ecdsa_key);
+	ferror.clear(E('_host_rsa_key'));
+	ferror.clear(E('_host_ecdsa_key'));
 }
 
 th.verifyFields = function(row, quiet) {
 
 	var f = fields.getAll(row);
 
-	if (f[1].value == "") {  ferror.set(f[1], "Host Name is required.", quiet); return 0 ; }
-	if (f[0].checked && f[2].value == "") {  ferror.set(f[2], "Address must be supplied when ConnectTo is checked.", quiet); return 0 ; }
+	if (f[1].value == "") {
+		ferror.set(f[1], "Host Name is required.", quiet); return 0 ; }
+	else {  ferror.clear(f[1]) }
+
+	if (f[0].checked && f[2].value == "") {
+		ferror.set(f[2], "Address must be supplied when ConnectTo is checked.", quiet); return 0 ; }
+	else {  ferror.clear(f[2]) }
+
 	if (!f[3].value == "" ) {
 		if (!v_port(f[3], quiet)) return 0 ;
 	}
 
-	if(_tinc_devicetype.value == 'tun'){
-		if (!v_subnet(f[5], quiet)) return 0 ;
+	if(E('_tinc_devicetype').value == 'tun'){
+		if ((!v_subnet(f[5], 1)) && (!v_ip(f[5], 1))) {
+			ferror.set(f[5], "Invalid Subnet or IP address.", quiet); return 0 ; }
+		else {  ferror.clear(f[5]) }
 	}
-	else if (_tinc_devicetype.value == 'tap'){
-		if (f[5].value != '') { ferror.set(f[5], "Subnet is left blank when using the TAP Interface Type.", quiet); return 0 ; }
+	else if (E('_tinc_devicetype').value == 'tap'){
+		if (f[5].value != '') {
+			ferror.set(f[5], "Subnet is left blank when using the TAP Interface Type.", quiet); return 0 ; }
+		else {  ferror.clear(f[5]) }
 	}
 
-	if (_host_rsa_key.value == "") {  ferror.set(_host_rsa_key, "RSA Public Key is required.", quiet); return 0 ; }
-	if (_host_ecdsa_key.value == "") {  ferror.set(_host_ecdsa_key, "ECDSA Public Key is required.", quiet); return 0 ; }
+	if (E('_host_rsa_key').value == "") {
+		ferror.set(E('_host_rsa_key'), "RSA Public Key is required.", quiet); return 0 ; }
+	else {  ferror.clear(E('_host_rsa_key')) }
+
+	if (E('_host_ecdsa_key').value == "") {
+		ferror.set(E('_host_ecdsa_key'), "ECDSA Public Key is required.", quiet); return 0 ; }
+	else {  ferror.clear(E('_host_ecdsa_key')) }
 
 	return 1;
 }
@@ -166,10 +181,10 @@ function verifyFields(focused, quiet)
 
 	switch(E('_tinc_manual_tinc_up').value) {
 		case '0' :
-			_tinc_tinc_up.disabled = 1 ;
+			E('_tinc_tinc_up').disabled = 1 ;
 		break;
 		case '1' :
-			_tinc_tinc_up.disabled = 0 ;
+			E('_tinc_tinc_up').disabled = 0 ;
 		break;
 	}
 
@@ -180,28 +195,46 @@ function verifyFields(focused, quiet)
 		PR(b).style.display = c ? '' : 'none';
 	}
 
-	edges.disabled = !tincup;
-	connections.disabled = !tincup;
-	subnets.disabled = !tincup;
-	nodes.disabled = !tincup;
-	info.disabled = !tincup;
-	hostselect.disabled = !tincup;
+	E('edges').disabled = !tincup;
+	E('connections').disabled = !tincup;
+	E('subnets').disabled = !tincup;
+	E('nodes').disabled = !tincup;
+	E('info').disabled = !tincup;
+	E('hostselect').disabled = !tincup;
 
 	// Element Verification
-	if (_tinc_name.value == "") {  ferror.set(_tinc_name, "Host Name is required.", quiet); return 0 ; }
-	if (_tinc_private_rsa.value == "") {  ferror.set(_tinc_private_rsa, "RSA Private Key is required.", quiet); return 0 ; }
-	if (_tinc_private_ecdsa.value == "") {  ferror.set(_tinc_private_ecdsa, "ECDSA Private Key is required.", quiet); return 0 ; }
+	if (E('_tinc_name').value == "") {
+		ferror.set(E('_tinc_name'), "Host Name is required.", quiet); return 0 ; }
+	else {  ferror.clear(E('_tinc_name')) }
+
+	if (E('_tinc_private_rsa').value == "") {
+		ferror.set(E('_tinc_private_rsa'), "RSA Private Key is required.", quiet); return 0 ; }
+	else {  ferror.clear(E('_tinc_private_rsa')) }
+
+	if (E('_tinc_private_ecdsa').value == "") {
+		ferror.set(E('_tinc_private_ecdsa'), "ECDSA Private Key is required.", quiet); return 0 ; }
+	else {  ferror.clear(E('_tinc_private_ecdsa')) }
+
 	if (!v_netmask('_tinc_vpn_netmask', quiet)) return 0;
+
+	if (!E('_host_rsa_key').value == "") {
+		ferror.clear(E('_host_rsa_key')) }
+
+	if (!E('_host_ecdsa_key').value == "") {
+		ferror.clear(E('_host_ecdsa_key')) }
 
 	var hostdefined = false;
 	var hosts = th.getAllData();
 	for (var i = 0; i < hosts.length; ++i) {
-		if(hosts[i][1] == _tinc_name.value){
+		if(hosts[i][1] == E('_tinc_name').value){
 			hostdefined = true;
 			break;
 		}
 	}
-	if (!hostdefined) {  ferror.set(_tinc_name, "Host Name \"" + _tinc_name.value + "\" is not defined in hosts area.", quiet); return 0 ; }
+
+	if (!hostdefined) {
+		ferror.set(E('_tinc_name'), "Host Name \"" + E('_tinc_name').value + "\" is not defined in hosts area.", quiet); return 0 ; }
+	else {  ferror.clear(E('_tinc_name')) };
 
 	return 1;
 }
@@ -244,10 +277,10 @@ String.prototype.between = function(prefix, suffix) {
 
 function displayKeys()
 {
-	_rsa_private_key.value = "-----BEGIN RSA PRIVATE KEY-----\n" + cmdresult. between('-----BEGIN RSA PRIVATE KEY-----\n','\n-----END RSA PRIVATE KEY-----') + "\n-----END RSA PRIVATE KEY-----";
-	_rsa_public_key.value = "-----BEGIN RSA PUBLIC KEY-----\n" + cmdresult. between('-----BEGIN RSA PUBLIC KEY-----\n','\n-----END RSA PUBLIC KEY-----') + "\n-----END RSA PUBLIC KEY-----";
-	_ecdsa_private_key.value = "-----BEGIN EC PRIVATE KEY-----\n" + cmdresult. between('-----BEGIN EC PRIVATE KEY-----\n','\n-----END EC PRIVATE KEY-----') + "\n-----END EC PRIVATE KEY-----";
-	_ecdsa_public_key.value = cmdresult. between('-----END EC PRIVATE KEY-----\n','\n');
+	E('_rsa_private_key').value = "-----BEGIN RSA PRIVATE KEY-----\n" + cmdresult. between('-----BEGIN RSA PRIVATE KEY-----\n','\n-----END RSA PRIVATE KEY-----') + "\n-----END RSA PRIVATE KEY-----";
+	E('_rsa_public_key').value = "-----BEGIN RSA PUBLIC KEY-----\n" + cmdresult. between('-----BEGIN RSA PUBLIC KEY-----\n','\n-----END RSA PUBLIC KEY-----') + "\n-----END RSA PUBLIC KEY-----";
+	E('_ecdsa_private_key').value = "-----BEGIN EC PRIVATE KEY-----\n" + cmdresult. between('-----BEGIN EC PRIVATE KEY-----\n','\n-----END EC PRIVATE KEY-----') + "\n-----END EC PRIVATE KEY-----";
+	E('_ecdsa_public_key').value = cmdresult. between('-----END EC PRIVATE KEY-----\n','\n');
 
 	cmdresult = '';
 	spin(0,'generateWait');
@@ -259,10 +292,10 @@ function generateKeys()
 	E('execb').disabled = 1;
 	spin(1,'generateWait');
 
-	_rsa_private_key.value = "";
-	_rsa_public_key.value = "";
-	_ecdsa_private_key.value = "";
-	_ecdsa_public_key.value = "";
+	E('_rsa_private_key').value = "";
+	E('_rsa_public_key').value = "";
+	E('_ecdsa_private_key').value = "";
+	E('_ecdsa_public_key').value = "";
 
 	cmd = new XmlHttp();
 	cmd.onCompleted = function(text, xml) {
@@ -293,7 +326,7 @@ function displayStatus()
 	spin(0,'statusWait');
 }
 
-function showStatus(type)
+function updateStatus(type)
 {
 	E('result').innerHTML = '';
 	spin(1,'statusWait');
@@ -318,13 +351,14 @@ function showStatus(type)
 	}
 
 	cmd.post('shell.cgi', 'action=execute&command=' + escapeCGI(commands.replace(/\r/g, '')));
-	if(type != "info") {updateNodes();}
+	updateNodes();
 }
 
 function displayNodes()
 {
 
 	var hostselect=document.getElementById("hostselect")
+	var selected = hostselect.value;
 
 	while(hostselect.firstChild){
 		hostselect.removeChild(hostselect.firstChild);
@@ -334,8 +368,12 @@ function displayNodes()
 
 	for (var i = 0; i < hosts.length; ++i)
 	{
-		if (hosts[i] != '')
+		if (hosts[i] != ''){
 			hostselect.options[hostselect.options.length]=new Option(hosts[i],hosts[i]);
+			if(hosts[i] == selected){
+				hostselect.value = selected;
+			}
+		}
 	}
 
 	cmdresult = '';
@@ -359,6 +397,28 @@ function updateNodes()
 		var commands = "/usr/sbin/tinc dump nodes | /bin/busybox awk '{print $1}'";
 		cmd.post('shell.cgi', 'action=execute&command=' + escapeCGI(commands.replace(/\r/g, '')));
 	}
+}
+
+function displayVersion()
+{
+	E('version').innerHTML = "<small>Tinc " + escapeText(cmdresult) + "</small>";
+        cmdresult = '';
+}
+
+function getVersion()
+{
+	cmd = new XmlHttp();
+	cmd.onCompleted = function(text, xml) {
+		eval(text);
+		displayVersion();
+	}
+	cmd.onError = function(x) {
+		cmdresult = 'ERROR: ' + x;
+		displayVersion();
+	}
+
+	var commands = "/usr/sbin/tinc --version | /bin/busybox awk 'NR==1  {print $3}'";
+	cmd.post('shell.cgi', 'action=execute&command=' + escapeCGI(commands.replace(/\r/g, '')));
 }
 
 function tabSelect(name)
@@ -433,6 +493,7 @@ function init()
 	th.resetNewEditor();
 	var c;
 	if (((c = cookie.get('vpn_tinc_hosts_vis')) != null) && (c == '1')) toggleVisibility("hosts");
+	getVersion();
 	updateNodes();
 }
 
@@ -473,7 +534,9 @@ function toggleVisibility(whichone) {
 <input type='hidden' name='_nextpage' value='vpn-tinc.asp'>
 <input type='hidden' name='_service' value=''>
 
+<div class='section-title' style='float:right' id='version'></div>
 <div class='section-title'>Tinc Configuration</div>
+
 
 <script type='text/javascript'>
 
@@ -573,8 +636,8 @@ function toggleVisibility(whichone) {
 
 	createFieldTable('', [
 		{ title: 'RSA Private Key', name: 'rsa_private_key', type: 'textarea', value: "" },
-		{ title: 'ECDSA Private Key', name: 'ecdsa_private_key', type: 'textarea', value: "" },
 		{ title: 'RSA Public Key', name: 'rsa_public_key', type: 'textarea', value: "" },
+		{ title: 'ECDSA Private Key', name: 'ecdsa_private_key', type: 'textarea', value: "" },
 		{ title: 'ECDSA Public Key', name: 'ecdsa_public_key', type: 'textarea', value: "" }
         ]);
 
@@ -599,16 +662,16 @@ function toggleVisibility(whichone) {
 
 	W('<div class=\'section\'>');
 
-	W('<div style=\'float:left\'><input type=\'button\' value=\'Edges\' onclick=\'showStatus(\"edges\")\' id=\'edges\' style=\"width:85px\"></div>');
-	W('<div style=\'float:left\'><input type=\'button\' value=\'Subnets\' onclick=\'showStatus(\"subnets\")\' id=\'subnets\' style=\"width:85px\"></div>');
-	W('<div style=\'float:left\'><input type=\'button\' value=\'Connections\' onclick=\'showStatus(\"connections\")\' id=\'connections\' style=\"width:85px\"></div>');
-	W('<div style=\'float:left\'><input type=\'button\' value=\'Nodes\' onclick=\'showStatus(\"nodes\")\' id=\'nodes\' style=\"width:85px\"></div>');
+	W('<div style=\'float:left\'><input type=\'button\' value=\'Edges\' onclick=\'updateStatus(\"edges\")\' id=\'edges\' style=\"width:85px\"></div>');
+	W('<div style=\'float:left\'><input type=\'button\' value=\'Subnets\' onclick=\'updateStatus(\"subnets\")\' id=\'subnets\' style=\"width:85px\"></div>');
+	W('<div style=\'float:left\'><input type=\'button\' value=\'Connections\' onclick=\'updateStatus(\"connections\")\' id=\'connections\' style=\"width:85px\"></div>');
+	W('<div style=\'float:left\'><input type=\'button\' value=\'Nodes\' onclick=\'updateStatus(\"nodes\")\' id=\'nodes\' style=\"width:85px\"></div>');
 	W('<div style=\"visibility:hidden;text-align:right\" id=\"statusWait\">Please wait... <img src=\'spin.gif\' style=\"vertical-align:top\"></div>');
 
 	W('</div>');
 
 	W('<div class=\'section\'>');
-	W('<input type=\'button\' value=\'Info\' onclick=\'showStatus(\"info\")\' id=\'info\' style=\"width:85px\">');
+	W('<input type=\'button\' value=\'Info\' onclick=\'updateStatus(\"info\")\' id=\'info\' style=\"width:85px\">');
 	W('<select id=\'hostselect\' style=\"width:170px\"></select>');
 	W('</div>');
 
