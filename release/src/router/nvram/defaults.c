@@ -915,7 +915,7 @@ const defaults_t defaults[] = {
 	{"tinc_custom",			""		},
 	{"tinc_hosts",			""		},
 	{"tinc_manual_firewall",	""		},
-	{"tinc_manual_tinc_up",		""		},
+	{"tinc_manual_tinc_up",		"0"		},
 
 	// scripts
 	{"tinc_tinc_up",		""		},
@@ -924,6 +924,7 @@ const defaults_t defaults[] = {
 	{"tinc_host_down",		""		},
 	{"tinc_subnet_up",		""		},
 	{"tinc_subnet_down",		""		},
+	{"tinc_firewall",		""		},
 #endif
 
 #ifdef TCONFIG_PPTP
