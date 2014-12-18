@@ -322,6 +322,7 @@ endif
 	@mv $(TARGETDIR)/lib/modules/*/kernel/net/ipv4/ip_gre.*o $(PLATFORMDIR)/extras/ || true
 
 	$(if $(TCONFIG_OPENVPN),@cp -f,$(if $(TCONFIG_USB_EXTRAS),@cp -f,$(if $(TCONFIG_IPV6),@cp -f,@mv))) $(TARGETDIR)/lib/modules/*/kernel/drivers/net/tun.*o $(PLATFORMDIR)/extras/ || true
+	$(if $(TCONFIG_TINC),@cp -f,$(if $(TCONFIG_USB_EXTRAS),@cp -f,$(if $(TCONFIG_IPV6),@cp -f,@mv))) $(TARGETDIR)/lib/modules/*/kernel/drivers/net/tun.*o $(PLATFORMDIR)/extras/ || true
 	$(if $(TCONFIG_EBTABLES),@cp -f,@mv) $(TARGETDIR)/lib/modules/*/kernel/net/bridge/netfilter/ebt*.*o $(PLATFORMDIR)/extras/ || true
 
 	@mv $(TARGETDIR)/lib/modules/*/kernel/drivers/net/ifb.*o $(PLATFORMDIR)/extras/ || true
@@ -629,7 +630,7 @@ openssl/stamp-h1:
 	no-sha0 no-smime no-camellia no-krb5 no-rmd160 no-ripemd \
 	no-seed no-capieng no-cms no-gms no-gmp no-rfc3779 \
 	$(if $(TCONFIG_TINC),,no-ec no-ecdh no-ecdsa) no-err no-hw no-jpake no-threads \
-	no-zlib no-engine no-engines no-sse2 no-perlasm \
+	no-zlib $(if $(TCONFIG_TINC),,no-engine) no-engines no-sse2 no-perlasm \
 	no-dtls1 no-store no-psk no-md2 no-mdc2 no-ts
 
 	@$(MAKE) -C openssl clean
@@ -646,9 +647,9 @@ openssl-install: openssl
 	$(STRIP) $(INSTALLDIR)/openssl/usr/lib/libcrypto.so.1.0.0
 	cd $(INSTALLDIR)/openssl/usr/lib && ln -sf libcrypto.so.1.0.0 libcrypto.so
 
-	install -D openssl/apps/openssl $(INSTALLDIR)/openssl/usr/sbin/openssl
-	$(STRIP) $(INSTALLDIR)/openssl/usr/sbin/openssl
-	chmod 0500 $(INSTALLDIR)/openssl/usr/sbin/openssl
+#	install -D openssl/apps/openssl $(INSTALLDIR)/openssl/usr/sbin/openssl
+#	$(STRIP) $(INSTALLDIR)/openssl/usr/sbin/openssl
+#	chmod 0500 $(INSTALLDIR)/openssl/usr/sbin/openssl
 
 	install -D -m 0500 httpd/gencert.sh $(INSTALLDIR)/openssl/usr/sbin/gencert.sh
 
@@ -1480,7 +1481,7 @@ tinc/stamp-h1: openssl zlib lzo
 
 tinc: tinc/stamp-h1
 	@$(SEP)
-	@$(MAKE) -C tinc LIBS="-lcrypto $(TOP)/zlib/libz.a -llzo2" $(PARALLEL_BUILD)
+	@$(MAKE) -C tinc LIBS="-lcrypto $(TOP)/zlib/libz.a $(TOP)/lzo/src/.libs/liblzo2.a" $(PARALLEL_BUILD)
 
 tinc-clean:
 	-@$(MAKE) -C tinc clean

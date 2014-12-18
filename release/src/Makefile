@@ -726,7 +726,7 @@ v:
 ifeq ($(CONFIG_LINUX26),y)
 	@$(MAKE) bin OPENVPN=y USERPPTP=y NO_JFFS=y BCM57=y B=V BUILD_DESC="$(VPN)" USB="" VLAN="$(VLAN)"
 else
-	@$(MAKE) bin OPENVPN=y BBEXTRAS=y B=V BUILD_DESC="$(VPN)" USB=""  SNMP=y VLAN="$(VLAN)"
+	@$(MAKE) bin OPENVPN=y TINC=y BBEXTRAS=y B=V BUILD_DESC="$(VPN)" USB=""  SNMP=y VLAN="$(VLAN)"
 endif
 
 ## Make the "Small VPN with no USB support" build
