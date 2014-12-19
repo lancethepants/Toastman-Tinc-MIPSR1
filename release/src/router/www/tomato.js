@@ -2489,7 +2489,7 @@ REMOVE-END */
 			['PPTP Client',		'pptp.asp']
 /* PPTP-END */
 /* TINC-BEGIN */
-			,['Tinc VPN',		'tinc.asp']
+			,['Tinc Daemon',	'tinc.asp']
 /* TINC-END */
 		] ],
 /* VPN-END */
